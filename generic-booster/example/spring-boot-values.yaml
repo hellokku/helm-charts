@@ -1,0 +1,74 @@
+# WORKDIR is /data
+# CMD app.jar
+image:
+  repository: kkuroo/spring-booster
+  pullPolicy: IfNotPresent
+  tag: "v1-debug"
+
+# runtime inject secret.properties
+command:
+  - java
+  - -jar
+  - app.jar
+args:
+  - --spring.config.additional-location=file:./secret/secret.properties
+
+# spring profile and jvm options by environments
+env:
+  - name: SPRING_PROFILES_ACTIVE
+    value: prd
+#  - name: JAVA_TOOL_OPTIONS
+#    value: -Xms1g -Xmx1g
+
+podAnnotations: {}
+#  prometheus.io/scrape: 'true'
+#  prometheus.io/path: '/actuator/prometheus'
+#  prometheus.io/port: '80'
+
+livenessProbe:
+  httpGet:
+    path: /actuator/health
+    port: http
+
+readinessProbe:
+  httpGet:
+    path: /actuator/health
+    port: http
+
+nodeSelector: {}
+
+resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+# custom define
+configMaps:
+  application.properties: |
+    # info, git container build info
+    management.endpoint.info.enabled=true
+    management.info.git.mode=full
+    management.info.build.enabled=false
+
+    # metrics for prometheus scrape
+    management.endpoint.metrics.enabled=true
+    management.endpoints.web.exposure.include=*
+    management.endpoint.prometheus.enabled=true
+    management.metrics.export.prometheus.enabled=true
+
+    logging.level.org.springframework.boot.context.config=debug
+
+# the name must be defined as config-maps
+configMapMounts:
+  - name: config-maps
+    mountPath: /data/application.properties
+    subPath: application.properties
+
+# custom define
+secretMounts:
+  - name: secret
+    secretName: xxx-spring-booster
+    mountPath: /data/secret

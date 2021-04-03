@@ -1,0 +1,8 @@
+image:
+  repository: kkuroo/busybox
+
+command: ["sh"]
+args: ["-c", "while true; do echo hello; sleep 10; done"]
+
+livenessProbe: null
+readinessProbe: null
