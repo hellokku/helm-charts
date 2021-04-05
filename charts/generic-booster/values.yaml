@@ -24,6 +24,7 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
+# -- for monitoring or logging annotations
 podAnnotations: {}
 #prometheus.io/scrape: 'true'
 #prometheus.io/path: '/prometheus/metrics'
