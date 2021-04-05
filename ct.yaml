@@ -1,0 +1,7 @@
+# See https://github.com/helm/chart-testing#configuration
+helm-extra-args: --timeout=500s
+remote: origin
+debug: true
+target-branch: master
+chart-dirs:
+  - .
