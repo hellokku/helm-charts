@@ -1,5 +1,5 @@
 # helm-charts
 usage
 ```
-helm repo add hellkku https://hellokku.github.io/
+helm repo add hellokku https://hellokku.github.io/helm-charts
 ```
