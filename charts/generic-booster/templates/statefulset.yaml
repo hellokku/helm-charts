@@ -1,6 +1,6 @@
-{{- if or (eq .Values.resource_type "deploy") (eq .Values.resource_type "deployment") }}
+{{- if or (eq .Values.resource_type "sts") (eq .Values.resource_type "statefulset") }}
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "generic-booster.fullname" . }}
   labels:
@@ -9,6 +9,7 @@ metadata:
     {{- toYaml .Values.labels | nindent 4 }}
     {{- end }}
 spec:
+  serviceName: {{ include "generic-booster.fullname" . }}
 {{- if and (not .Values.autoscaling.enabled) (ge .Values.replicaCount 0.0) }}
   replicas: {{ .Values.replicaCount }}
 {{- end }}
@@ -20,8 +21,8 @@ spec:
       {{- include "generic-booster.matchLabels" . | nindent 6 }}
       {{- end }}
   {{- if .Values.strategy }}
-  strategy:
-    {{- toYaml .Values.strategy | nindent 4 }}
+  updateStrategy:
+    {{- toYaml .Values.updateStrategy | nindent 4 }}
   {{- end }}
   template:
     metadata:
@@ -128,9 +129,9 @@ spec:
             {{- end }}
         {{- end }}
         {{- /*
-         if .Values.configMaps
+         if .Values.configMaps 
         */}}
-
+        
         {{- range .Values.configMaps }}
         - name: {{ .name }}
           configMap:
@@ -146,6 +147,10 @@ spec:
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       {{- with .Values.topologySpreadConstraints }}
       topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.volumeClaimTemplates }}
+      volumeClaimTemplates:
         {{- toYaml . | nindent 8 }}
       {{- end }}
     {{- with .Values.extraValues }}

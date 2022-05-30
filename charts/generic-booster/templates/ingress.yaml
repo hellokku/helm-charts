@@ -1,10 +1,11 @@
 {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "generic-booster.fullname" . -}}
-{{- $svcPort := .Values.service.port -}}
-{{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
-apiVersion: networking.k8s.io/v1beta1
+{{- $svcPortNum := .Values.service.port -}}
+{{- $svcPortName := .Values.service.portName -}}
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1
 {{- else -}}
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
@@ -28,14 +29,23 @@ spec:
   {{- end }}
   rules:
     {{- range .Values.ingress.hosts }}
-    - host: {{ .host | quote }}
-      http:
+    - http:
         paths:
           {{- range .paths }}
-          - path: {{ . }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
             backend:
-              serviceName: {{ $fullName }}
-              servicePort: {{ $svcPort }}
+              service:
+                name: {{ .serviceName | default $fullName }}
+                port: 
+                  {{- if and (or $svcPortName .portName) (not .portNum)}}
+                  name: {{ .portName | default $svcPortName }}
+                  {{ else if $svcPortNum }}
+                  number: {{ .portNum | default $svcPortNum }}
+                  {{- end }} 
           {{- end }}
+      {{- if .host }}
+      host: {{ .host | quote }}
+      {{- end }} 
     {{- end }}
   {{- end }}

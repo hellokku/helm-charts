@@ -1,6 +1,6 @@
-{{- if or (eq .Values.resource_type "deploy") (eq .Values.resource_type "deployment") }}
+{{- if or (eq .Values.resource_type "ds") (eq .Values.resource_type "daemonset") }}
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
   name: {{ include "generic-booster.fullname" . }}
   labels:
@@ -9,9 +9,6 @@ metadata:
     {{- toYaml .Values.labels | nindent 4 }}
     {{- end }}
 spec:
-{{- if and (not .Values.autoscaling.enabled) (ge .Values.replicaCount 0.0) }}
-  replicas: {{ .Values.replicaCount }}
-{{- end }}
   selector:
     matchLabels:
       {{- if .Values.matchLabels }}
@@ -20,8 +17,8 @@ spec:
       {{- include "generic-booster.matchLabels" . | nindent 6 }}
       {{- end }}
   {{- if .Values.strategy }}
-  strategy:
-    {{- toYaml .Values.strategy | nindent 4 }}
+  updateStrategy:
+    {{- toYaml .Values.updateStrategy | nindent 4 }}
   {{- end }}
   template:
     metadata:
@@ -110,9 +107,11 @@ spec:
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.tolerations }}
       tolerations:
-        {{- toYaml . | nindent 8 }}
+      {{- if .Values.tolerations }}
+        {{- toYaml .Values.tolerations | nindent 6 }}
+      {{- else }}
+      - operator: Exists
       {{- end }}
       volumes:
         {{- if or .Values.configMapMounts .Values.secretMounts .Values.emptDirMounts }}
@@ -128,9 +127,9 @@ spec:
             {{- end }}
         {{- end }}
         {{- /*
-         if .Values.configMaps
+         if .Values.configMaps 
         */}}
-
+        
         {{- range .Values.configMaps }}
         - name: {{ .name }}
           configMap:
@@ -151,4 +150,5 @@ spec:
     {{- with .Values.extraValues }}
       {{- toYaml . | nindent 6 }}
     {{- end }}
+
 {{- end }}

@@ -2,54 +2,26 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
+# this is app.kuberneteis.io/name, default values is "{{ .Chart.Name }}"
+# It is the name of the application when using the istio 
 
-# -- images.tag must be defined
-image:
-  repository: nginx
-  pullPolicy: IfNotPresent
-  tag: ""
+# ----------------------------
+# Service Mesh
+# ----------------------------
+# -- set app.kubernetes.io/instance in matchLabel as this value
+appName: ""
 
-imagePullSecrets: []
-# -- it's better not to use it
-nameOverride: ""
-fullnameOverride: ""
+# -- added specifically application app.kubernetes.io/version to pod Label, its default is image tag
+appVersion: stable
 
-serviceAccount:
-  # Specifies whether a service account should be created
-  create: true
-  # Annotations to add to the service account
-  annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
-  name: ""
+# -- if true, app.kubernetes.io/application label to pod Selector 
+appVersionSelector: true
 
-# -- for monitoring or logging annotations
-podAnnotations: {}
-#prometheus.io/scrape: 'true'
-#prometheus.io/path: '/prometheus/metrics'
-#prometheus.io/port: '80'
-#fluentbit.io/parser_stream-container
-#fluentbit.io/exclude_stream-container
 
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
-service:
-  type: ClusterIP
-  port: 80
-
-# -- the name must be defined as config-maps
-containerPort: 8080
-
+#  service_name:
+# ----------------------------
+# Ingress
+# ----------------------------
 ingress:
   enabled: false
   annotations: {}
@@ -63,6 +35,152 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
+
+# ----------------------------
+# Service & ServiceAccount
+# ----------------------------
+service:
+  enabled: true
+  type: ClusterIP
+  clusterIP: ""
+  port: 80
+  portName: http
+  targetPort: http
+  ports: []
+#    - name: https
+#      port: 443
+#      protocol: TCP
+#      targetPort: https 
+#    - name: someport
+#      port: 1234
+#      protocol: TCP
+#      targetPort: someport
+  annotations: {}
+
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+
+# ----------------------------
+# Deployment or StatefulSet
+# ----------------------------
+# -- Choose one out of deploy, deployment, sts, statefulset
+resource_type: "deployment"
+
+# default deployment's strategy - only deployment type
+strategy:
+  # deployment
+  rollingUpdate:
+    maxSurge: 25%
+    maxUnavailable: 25%
+  type: RollingUpdate
+
+# default statefulset strategy - statefulset, or daemonset type
+updateStrategy:
+  # statefulset
+  type: RollingUpdate
+
+# -- if you use the HPA, set it to -1
+replicaCount: 1
+
+# -- it's an additional labels of the deployments
+labels: {}
+
+# -- pod selector matchLabels, if you define this, there replace the matchLabels
+matchLabels: {}
+
+# -- pod spread constraints
+topologySpreadConstraints: []
+#- maxSkew: 1
+#  topologyKey: topology.kubernetes.io/zone
+#  whenUnsatisfiable: DoNotSchedule
+#  labelSelector:
+#    matchLabels:
+#      foo: bar
+
+# ----------------------------
+# Pod
+# ----------------------------
+# -- it's an additional labels of the Pod
+podLabels: {}
+#istio.io/rev: "1-10-3"
+
+# -- it's an additional annotations of the Pod
+podAnnotations: {}
+#prometheus.io/scrape: 'true'
+#prometheus.io/path: '/prometheus/metrics'
+#prometheus.io/port: '80'
+#fluentbit.io/parser_stream-container
+#fluentbit.io/exclude_stream-container
+
+# -- it's Pod scope securityContext 
+podSecurityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+# -- nodeSelector
+nodeSelector: {}
+
+# -- tolerations
+tolerations: []
+
+# -- affinity
+affinity: {}
+
+# -- termination grace period seconds for Pod
+terminationGracePeriodSeconds: 30
+
+# ----------------------------
+# Container
+# ----------------------------
+# -- custom init containers
+podInitContainers: []
+#- name: init-chown-data
+#  image: "busybox:1.31.1"
+#  imagePullPolicy: IfNotPresent
+#  securityContext:
+#    runAsNonRoot: false
+#    runAsUser: 0
+#  command: ["chown", "-R", "472:472", "/var/lib/simple"]
+#  resources:
+#    {}
+#  volumeMounts:
+#    - name: storage
+#      mountPath: "/var/lib/simple"
+
+
+# -- images.tag must be defined
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  tag: ""
+
+# -- secret to pull image
+imagePullSecrets: []
+# -- it's better not to use it
+
+# -- the name must be defined as config-maps
+containerPorts:
+- containerPort: 80
+  protocol: TCP
+  name: http
+
+# -- securityContext for container scope
+containerSecurityContext: {}
+#  fsGroup: 65534
+
+# -- container resources, feel-free
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
@@ -75,29 +193,34 @@ resources: {}
   #   cpu: 100m
   #   memory: 128Mi
 
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
+# -- container lifecycle, feel-free define   
+lifecycle: {}
+#  postStart:
+#    exec:
+#      command:
+#      - sh
+#      - -c
+#      - sleep 10
+#  preStop:
+#    exec:
+#      command: [
+#        # Gracefully shutdown nginx
+#        "/usr/sbin/nginx", "-s", "quit"
+#      ] 
 
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
+# -- custom command
 command: []
 # java -jar /data/app.jar
 #  - java
 #  - -jar
 #  - /data/app.jar
 
+# -- custom argument
 args: []
 # location is /data/secret/db.properties
 #  - '--spring.config.additional-location=file:./secret/db.properties'
 
+# -- additional environments
 env: []
 #  - name: YOUR_ENV
 #    value: my-env
@@ -106,24 +229,43 @@ env: []
 #  - name: JAVA_TOOL_OPTIONS
 #    value: -Xms1g -Xmx3g
 
+# -- overwrite startupProbe
+startupProbe: {}
+#  httpGet:
+#    path: /
+#    port: http
+
+# -- overwrite livenessProbe
 livenessProbe:
   httpGet:
     path: /
     port: http
 
+# -- overwrite readinessProble
 readinessProbe:
   httpGet:
     path: /
     port: http
 
-
+# -- secrets mount
 secretMounts: []
 #  - name: secret
 #    secretName: xxx-generic-booster
 #    mountPath: /data
 
-# -- feel free to define
-configMaps: {}
+# -- configmap list
+configMaps: []
+#- name: example
+#  annotations: {}
+#  data:
+#    example.json: |-
+#      {
+#          "matchmaker":{            
+#              "hostname":"xxx.yyy.zzz.com",
+#              "grpcport":82,
+#              "httpport":80
+#          }
+#      }
 #  application.properties: |
 #    # info, git container build info
 #    management.endpoint.info.enabled=true
@@ -131,7 +273,36 @@ configMaps: {}
 #    management.info.build.enabled=false
 
 # -- the name must be defined as config-maps
-configMounts: []
+configMapMounts: []
 #  - name: config-maps
+#    configMapname: config-maps
 #    mountPath: /data/application.properties
 #    subPath: application.properties
+
+# -- define emptyDir and Mount path
+emptDirMounts: []
+
+# ----------------------------
+# VolumeClaminTemplate for Statefulset
+# ----------------------------
+# -- define volumeClaimTemplates, only statefulset type
+volumeClaimTemplates: []
+
+# ----------------------------
+# HPA
+# ----------------------------
+# -- hpa
+autoscaling:
+  enabled: false
+  annotations: {}
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+  metrics: []
+#    - type: Resource
+#      resource:
+#        name: memory
+#        target:
+#          type: Utilization
+#          averageUtilization: 80

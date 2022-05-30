@@ -1,13 +1,16 @@
-{{- if .Values.configMaps }}
+{{- range .Values.configMaps }}
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "generic-booster.fullname" . }}
-  labels:
-    {{- include "generic-booster.labels" . | nindent 4 }}
-data:
-{{- range $path, $config := .Values.configMaps }}
+  name: {{ .name }}
+  {{- with .annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+data: 
+{{- range $path, $config := .data }}
   {{ $path }}: |
-{{ $config | indent 4 -}}
-{{- end -}}
+{{ (tpl $config $) | indent 4 -}}
+{{- end }}
 {{- end }}
