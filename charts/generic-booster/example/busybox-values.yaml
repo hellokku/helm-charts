@@ -1,8 +1,10 @@
+appName: busybox
+testConnection: false
+
 image:
   repository: kkuroo/busybox
 
-command: ["sh"]
-args: ["-c", "while true; do echo hello; sleep 10; done"]
+tty: true
 
 livenessProbe: null
 readinessProbe: null

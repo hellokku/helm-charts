@@ -164,7 +164,7 @@ podInitContainers: []
 image:
   repository: nginx
   pullPolicy: IfNotPresent
-  tag: ""
+  tag: latest
 
 # -- secret to pull image
 imagePullSecrets: []
@@ -247,13 +247,27 @@ readinessProbe:
     path: /
     port: http
 
-# -- secrets mount
-secretMounts: []
-#  - name: secret
-#    secretName: xxx-generic-booster
-#    mountPath: /data
-
+# -- volumes
+volumes: []
+#- name: mysql-tls
+#  secret:
+#    secretName: selfsigned-cert-tls
+#- name: mysql-cnf
+#  configMap:
+#    name: mysql-cnf
 # -- configmap list
+
+# -- volumeMounts
+volumeMounts: []
+#- name: mysql-tls
+#  mountPath: /etc/mysql/tls
+#  readOnly: true
+#- mountPath: /etc/mysql/conf.d/my.cnf
+#  name: mysql-cnf
+#  subPath: my.cnf
+#- mountPath: /var/lib/mysql
+#  name: mysql-data
+
 configMaps: []
 #- name: example
 #  annotations: {}
@@ -272,21 +286,16 @@ configMaps: []
 #    management.info.git.mode=full
 #    management.info.build.enabled=false
 
-# -- the name must be defined as config-maps
-configMapMounts: []
-#  - name: config-maps
-#    configMapname: config-maps
-#    mountPath: /data/application.properties
-#    subPath: application.properties
-
-# -- define emptyDir and Mount path
-emptDirMounts: []
-
 # ----------------------------
 # VolumeClaminTemplate for Statefulset
 # ----------------------------
 # -- define volumeClaimTemplates, only statefulset type
 volumeClaimTemplates: []
+# -- extraContainers
+extraContainers: []
+
+# -- test-connection
+testConnection: true
 
 # ----------------------------
 # HPA

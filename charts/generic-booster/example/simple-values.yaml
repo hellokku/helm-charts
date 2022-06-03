@@ -1,0 +1,47 @@
+# helm install simple mod-charts/generic-booster -f simple-values.yaml
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  tag: 1.14.2
+
+podLabels:
+  sidecar.istio.io/inject: "false"
+  istio.io/rev: 1-11-1
+
+replicaCount: 1
+
+containerPorts:
+- containerPort: 80
+  name: http
+  protocol: TCP
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+configMaps:
+- name: simple
+  data: 
+    index.html: |
+      <h1>Simple</h1>
+
+volumes:
+- name: simple
+  configMap:
+    name: simple
+
+volumeMounts:
+- name: simple
+  mountPath: /usr/share/nginx/html/
+- name: simple
+  mountPath: /usr/share/nginx/html/simple/
+
+podAnnotations:
+  fluentbit.io/exclude: "true"
+  prometheus.io/scrape: "false"

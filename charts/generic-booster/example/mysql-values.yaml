@@ -1,0 +1,72 @@
+appName: mysql
+
+service:
+  clusterIP: None
+  port: false
+  ports:
+  - port: 3306
+    name: mysql
+    protocol: TCP
+    targetPort: mysql
+
+resource_type: statefulset
+
+replicasCount: 1
+
+image:
+  repository: mysql
+  tag: 8.0.21
+
+containerPorts:
+- containerPort: 3306
+  name: mysql
+  protocol: TCP
+
+livenessProbe: null
+readinessProbe: null
+
+volumeClaimTemplates:
+- metadata:
+    name: mysql-data
+  spec:
+    accessModes: [ "ReadWriteOnce" ]
+    storageClassName: "gp3"
+    resources:
+      requests:
+        storage: 10Gi
+
+configMaps:
+- name: mysql-cnf
+  data:
+    my.cnf: |-
+      [mysqld]
+      port=3306
+      socket=/tmp/mysql.sock
+      key_buffer_size=16M
+      max_allowed_packet=128M
+#      ssl-ca=/etc/mysql/tls/ca.crt
+#      ssl-cert=/etc/mysql/tls/tls.crt
+#      ssl-key=/etc/mysql/tls/tls.key
+#      require_secure_transport=ON
+
+volumes:
+- name: mysql-tls
+  secret:
+    secretName: selfsigned-cert-tls
+- name: mysql-cnf
+  configMap:
+    name: mysql-cnf
+
+volumeMounts:
+- name: mysql-cnf
+  mountPath: /etc/mysql/conf.d/my.cnf
+  subPath: my.cnf
+- name: mysql-data
+  mountPath: /var/lib/mysql
+#- name: mysql-tls
+#  mountPath: /etc/mysql/tls
+#  readOnly: true
+
+env:
+- name: MYSQL_ROOT_PASSWORD
+  value: password

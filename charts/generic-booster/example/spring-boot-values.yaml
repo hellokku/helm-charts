@@ -62,13 +62,18 @@ configMaps:
     logging.level.org.springframework.boot.context.config=debug
 
 # the name must be defined as config-maps
-configMapMounts:
-  - name: config-maps
-    mountPath: /data/application.properties
-    subPath: application.properties
-
-# custom define
-secretMounts:
-  - name: secret
+volumes:
+- name: xxx-spring-booster
+  secret:
     secretName: xxx-spring-booster
-    mountPath: /data/secret
+- name: config-maps
+  configMap:
+    name: config-maps
+
+volumeMounts:
+- name: config-maps
+  mountPath: /data/application.properties
+  subPath: application.properties
+- name: secret
+  secretName: xxx-spring-booster
+  mountPath: /data/secret
