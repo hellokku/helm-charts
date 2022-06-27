@@ -1,0 +1,71 @@
+{{define "release_name"}}log-aggregator{{end}}
+{{ define "extra.header" -}}
+{{ template "chart.header" . }}
+{{ template "chart.description" . }}
+
+{{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}{{ template "chart.appVersionBadge" . }}
+{{- end }}
+
+
+{{ define "extra.helm_basic" -}}
+## Basic Helm Chart
+### install & upgrade
+```
+# helm upgrade --install <release name> <repository>/<chart name> -f values.yaml
+# For example
+helm upgrade --install {{ template "release_name" . }} labs-charts/{{ template "chart.name" . }} -f values.yaml
+```
+
+### preview manifest
+```
+helm template {{ template "release_name" . }} labs-charts/{{ template "chart.name" . }} -f values.yaml
+```
+
+### diff manifest
+```
+helm diff upgrade {{ template "release_name" . }} labs-charts/{{ template "chart.name" . }} -f values.yaml
+```
+{{- end }}
+
+
+{{ define "extra.helm_package" -}}
+
+### get current image tag
+```
+kubectl get deploy simple -o yaml | yq e '.spec.template.spec.containers[] | select(.name == "simple") | .image' - | cut -d ':' -f 2
+helm template simple mod-charts/generic-cronjob -f simple.yaml --set image.tag=`kubectl get deploy simple -o yaml | yq e '.spec.template.spec.containers[] | select(.name == "simple") | .image' - | cut -d ':' -f 2`
+```
+
+## Package Helm Chart
+* 아래 명령어 순서에 따라 helm chart를 packaging 하고 repository에 upload 한다.
+```
+# helm package --version <chart version> --app-version <image tag> ./
+helm package --version {{ template "chart.version" . }} --app-version {{ template "chart.appVersion" . }} ./
+
+helm s3 push {{ template "chart.name" . }}-{{ template "chart.version" . }}.tgz labs-charts
+```
+{{- end }}
+
+
+{{ define "extra.helm_doc" -}}
+## Generage Helm Doc
+* helm-doc을 이용해 helm 문서를 Generate한다.
+* 필요한 pre-commit을 통해 자동화 할 수 있다.
+* 자세한 내용은 다음 URL을 참조 https://github.com/norwoodj/helm-docs
+```
+helm-docs --template-files=_templates.gotmpl --template-files=_README.md.gotmpl
+```
+{{- end }}
+
+{{ define "extra.contents" -}}
+## features
+* Support simply only single container (e.g. RestAPI Applications).
+  single container means what not support  Multi-Container
+* Support AWS Ingress(`networking.k8s.io/v1`). but You have to manage the Ingress manually on the Stage and Live Env
+* Do not use this chart if the application configuration is a complex configuration such as policy, disk addition, multi-containers.
+
+{{- end}}
+
+{{ define "extra.footer" -}}
+
+{{- end }}

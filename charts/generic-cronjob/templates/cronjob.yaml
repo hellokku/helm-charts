@@ -1,0 +1,66 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "generic-cronjob.fullname" . }}
+  labels:
+    {{- include "generic-cronjob.labels" . | nindent 4 }}
+    {{- if .Values.labels }}
+    {{- toYaml .Values.labels | nindent 4 }}
+    {{- end }}
+  annotations: {}
+spec:
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    metadata:
+      labels:
+        {{- toYaml .Values.jobLabels | nindent 8 }}
+      annotations:
+        {{- toYaml .Values.jobAnnotations | nindent 8 }}
+    spec:
+      backoffLimit: 2
+      template:
+        metadata:
+          annotations:
+            {{- include "generic-cronjob.podAnnotations" . | nindent 12 }}
+          labels:
+            {{- include "generic-cronjob.podLabels" . | nindent 12 }}
+        spec:
+          containers:
+          - name: {{ .Values.appName | default .Release.Name }}
+            {{- if or .Values.containerSecurityContext }}
+            securityContext:
+              {{- toYaml .Values.containerSecurityContext | nindent 12 }}
+            {{- end }}
+            image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            imagePullPolicy: {{ .Values.image.pullPolicy }}
+            {{- if .Values.env }}
+            env: {{ toYaml .Values.env | nindent 12 }}
+            {{- end }}
+            {{- if .Values.command }}
+            command:
+            {{- toYaml .Values.command | nindent 12 }}
+            {{- end }}
+            {{- if .Values.args }}
+            args:
+            {{- toYaml .Values.args | nindent 12 }}
+            {{- end}}
+            resources:
+              {{- toYaml .Values.resources | nindent 14 }}
+            {{- with .Values.volumeMounts }}
+            volumeMounts:
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+            terminationMessagePath: /dev/termination-log
+            terminationMessagePolicy: File
+          terminationGracePeriodSeconds: 30
+          {{- with .Values.volumes }}
+          volumes:
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          {{- with .Values.extraPodValues }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+  schedule: {{ .Values.schedule }}
+  successfulJobsHistoryLimit: 3
+  suspend: {{ .Values.suspend }}

@@ -1,0 +1,177 @@
+# ----------------------------
+# CronJob
+# ----------------------------
+sechedule: ""
+suspend: "false"
+successfulJobsHistoryLimit: 3
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+# ----------------------------
+# CronJob
+# ----------------------------
+# -- it's an additional labels of the CronJob
+labels: {}
+# -- it's an additional annotations of the CronJob
+annotations: {}
+
+# ----------------------------
+# Job
+# ----------------------------
+# -- it's an additional labels of the Pod
+jobLabels: {}
+#istio.io/rev: "1-10-3"
+
+# -- it's an additional annotations of the Pod
+jobAnnotations: {}
+
+# ----------------------------
+# Pod
+# ----------------------------
+# -- it's an additional labels of the Pod
+podLabels: {}
+#istio.io/rev: "1-10-3"
+
+# -- it's an additional annotations of the Pod
+podAnnotations: {}
+#prometheus.io/scrape: 'true'
+#prometheus.io/path: '/prometheus/metrics'
+
+# -- it's Pod scope securityContext 
+podSecurityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+# -- nodeSelector
+nodeSelector: {}
+
+# -- tolerations
+tolerations: []
+
+# -- affinity
+affinity: {}
+
+# -- termination grace period seconds for Pod
+terminationGracePeriodSeconds: 30
+
+# ----------------------------
+# Container
+# ----------------------------
+# -- custom init containers
+initContainers: []
+#- name: init-chown-data
+#  image: "busybox:1.31.1"
+#  imagePullPolicy: IfNotPresent
+#  securityContext:
+#    runAsNonRoot: false
+#    runAsUser: 0
+#  command: ["chown", "-R", "472:472", "/var/lib/simple"]
+#  resources:
+#    {}
+#  volumeMounts:
+#    - name: storage
+#      mountPath: "/var/lib/simple"
+
+
+# -- images.tag must be defined
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  tag: latest
+
+# -- secret to pull image
+imagePullSecrets: []
+# -- it's better not to use it
+
+# -- securityContext for container scope
+containerSecurityContext: {}
+#  fsGroup: 65534
+
+# -- container resources, feel-free
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+
+# -- custom command
+command: []
+# java -jar /data/app.jar
+#  - java
+#  - -jar
+#  - /data/app.jar
+
+# -- custom argument
+args: []
+# location is /data/secret/db.properties
+#  - '--spring.config.additional-location=file:./secret/db.properties'
+
+# -- additional environments
+env: []
+#  - name: YOUR_ENV
+#    value: my-env
+#  - name: SPRING_PROFILES_ACTIVE
+#    value: prd
+#  - name: JAVA_TOOL_OPTIONS
+#    value: -Xms1g -Xmx3g
+
+
+# -- volumes
+volumes: []
+#- name: mysql-tls
+#  secret:
+#    secretName: selfsigned-cert-tls
+#- name: mysql-cnf
+#  configMap:
+#    name: mysql-cnf
+# -- configmap list
+
+# -- volumeMounts
+volumeMounts: []
+#- name: mysql-tls
+#  mountPath: /etc/mysql/tls
+#  readOnly: true
+#- mountPath: /etc/mysql/conf.d/my.cnf
+#  name: mysql-cnf
+#  subPath: my.cnf
+#- mountPath: /var/lib/mysql
+#  name: mysql-data
+
+configMaps: []
+#- name: example
+#  annotations: {}
+#  data:
+#    example.json: |-
+#      {
+#          "matchmaker":{            
+#              "hostname":"xxx.yyy.zzz.com",
+#              "grpcport":82,
+#              "httpport":80
+#          }
+#      }
+#  application.properties: |
+#    # info, git container build info
+#    management.endpoint.info.enabled=true
+#    management.info.git.mode=full
+#    management.info.build.enabled=false
+
+# -- extraPodValues
+extraPodValues: []
