@@ -29,4 +29,14 @@ entries:
     urls:
     - https://github.com/hellokku/helm-charts/releases/download/generic-booster-0.1.1/generic-booster-0.1.1.tgz
     version: 0.1.1
+  generic-cronjob:
+  - apiVersion: v2
+    created: "2022-06-27T08:50:57.308683813Z"
+    description: A Helm chart for Generic Cron Job,
+    digest: b22c698950d5ec22d9697547c59794371e2aed0eb340bd9ff2eab3417b4c808b
+    name: generic-cronjob
+    type: application
+    urls:
+    - https://github.com/hellokku/helm-charts/releases/download/generic-cronjob-0.1.0/generic-cronjob-0.1.0.tgz
+    version: 0.1.0
 generated: "2021-04-05T03:33:43.087045609Z"
