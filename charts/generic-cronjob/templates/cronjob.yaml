@@ -18,7 +18,7 @@ spec:
       annotations:
         {{- toYaml .Values.jobAnnotations | nindent 8 }}
     spec:
-      backoffLimit: 2
+      backoffLimit: {{ .Values.backoffLimit }}
       template:
         metadata:
           annotations:
@@ -61,6 +61,6 @@ spec:
           {{- with .Values.extraPodValues }}
             {{- toYaml . | nindent 10 }}
           {{- end }}
-  schedule: {{ .Values.schedule }}
+  schedule: {{ .Values.schedule | quote }}
   successfulJobsHistoryLimit: 3
   suspend: {{ .Values.suspend }}
