@@ -6,7 +6,7 @@ image:
 
 podLabels:
   sidecar.istio.io/inject: "false"
-  istio.io/rev: 1-11-1
+  istio.io/rev: 1-14-1
 
 replicaCount: 1
 

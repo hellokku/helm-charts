@@ -1,0 +1,67 @@
+# helm install simple mod-charts/generic-booster -f simple-values.yaml
+appName: hpa-test
+
+image:
+  repository: k8s.gcr.io/hpa-example
+  pullPolicy: IfNotPresent
+  tag: latest
+
+podLabels:
+  sidecar.istio.io/inject: "false"
+  istio.io/rev: 1-14-1
+
+podAnnotations:
+  fluentbit.io/exclude: "true"
+  prometheus.io/scrape: "false"
+
+replicaCount: 1
+
+containerPorts:
+- containerPort: 80
+  name: http
+  protocol: TCP
+
+resources:
+  requests:
+    cpu: 50m
+  limits:
+    cpu: 500m
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+configMaps:
+- name: simple
+  data:
+    index.php: |
+      <?php
+        $x = 0.0001;
+        for ($i = 0; $i <= 1000000; $i++) {
+          $x += sqrt($x);
+        }
+        echo "OK!";
+      ?>
+
+volumes:
+- name: simple
+  configMap:
+    name: simple
+
+volumeMounts:
+- name: simple
+  mountPath: /var/www/html/
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+
