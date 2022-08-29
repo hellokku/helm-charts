@@ -215,10 +215,16 @@ command: []
 #  - -jar
 #  - /data/app.jar
 
+# -- additional extra Command, for specific command
+extraCommand: []
+
 # -- custom argument
 args: []
 # location is /data/secret/db.properties
 #  - '--spring.config.additional-location=file:./secret/db.properties'
+
+# -- additional extra Arguments, for specific args
+extraArgs: []
 
 # -- additional environments
 env: []
@@ -229,6 +235,11 @@ env: []
 #  - name: JAVA_TOOL_OPTIONS
 #    value: -Xms1g -Xmx3g
 
+# -- additional extra environments, for specific env
+extraEnv: []
+
+extraEnvFrom: []
+
 # -- overwrite startupProbe
 startupProbe: {}
 #  httpGet:
@@ -236,16 +247,16 @@ startupProbe: {}
 #    port: http
 
 # -- overwrite livenessProbe
-livenessProbe:
-  httpGet:
-    path: /
-    port: http
+livenessProbe: {}
+#  httpGet:
+#    path: /
+#    port: http
 
 # -- overwrite readinessProble
-readinessProbe:
-  httpGet:
-    path: /
-    port: http
+readinessProbe: {}
+#  httpGet:
+#    path: /
+#    port: http
 
 # -- volumes
 volumes: []

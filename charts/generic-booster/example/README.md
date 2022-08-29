@@ -4,12 +4,17 @@ helm upgrade --install xxx generic-booster/ -f generic-booster/example/spring-bo
 ```
 
 ## hpa
-## mysql
+## hpa-test
 ```
-helm upgrade --install hpa-test hellokku/generic-booster -f hpa-test-values.yaml
+helm diff upgrade --install hpa-test hellokku/generic-booster -f hpa-test-values.yaml
 ```
 
 ## mysql
 ```
 helm upgrade --install mysql hellokku/generic-booster -f mysql-values.yaml
+```
+
+## nginx
+```
+helm upgrade --install nginx hellokku/generic-booster -f nginx-values.yaml
 ```
