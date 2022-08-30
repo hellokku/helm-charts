@@ -2,6 +2,15 @@ apiVersion: v1
 entries:
   generic-booster:
   - apiVersion: v2
+    created: "2022-08-30T12:39:35.878814111Z"
+    description: A Helm chart for Generic App,
+    digest: b10deec50b8a877a189bd8c21aef490565b570f9d5e1ffda25a62d0ab9036bff
+    name: generic-booster
+    type: application
+    urls:
+    - https://github.com/hellokku/helm-charts/releases/download/generic-booster-0.12.0/generic-booster-0.12.0.tgz
+    version: 0.12.0
+  - apiVersion: v2
     created: "2022-08-29T02:15:22.862518736Z"
     description: A Helm chart for Generic App,
     digest: f31d0ee1c1503a4ef494a2fa40182b31490f541a24b123a994c364f5e81462fc
