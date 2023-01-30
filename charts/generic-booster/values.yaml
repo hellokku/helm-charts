@@ -145,7 +145,7 @@ terminationGracePeriodSeconds: 30
 # Container
 # ----------------------------
 # -- custom init containers
-podInitContainers: []
+initContainers: []
 #- name: init-chown-data
 #  image: "busybox:1.31.1"
 #  imagePullPolicy: IfNotPresent
@@ -326,3 +326,26 @@ autoscaling:
 #        target:
 #          type: Utilization
 #          averageUtilization: 80
+
+# ----------------------------
+# datadog
+# ----------------------------
+#- name: JAVA_TOOL_OPTIONS
+#  value: ... -javaagent:/datadog/apm/agent/dd-java-agent.jar
+
+datadog:
+  enabled: false
+  env: wedapne2
+  # if not was defined, default is image.tag
+#  version: stable
+  configs:
+  - DD_TRACE_ENABLED: "true"
+#  -- global sampling rate
+#  - DD_TRACE_SAMPLE_RATE: "0.1"
+    DD_PROFILING_ENABLED: "false"
+    DD_LOGS_INJECTION: "false"
+  - DD_JMXFETCH_ENABLED: "true"
+#  a number of traces per second per service instance.
+#  If no DD_TRACE_RATE_LIMIT value is set, a limit of 100 traces per second is applied.
+#  - DD_TRACE_RATE_LIMIT: "100"
+  - DD_DOGSTATSD_NON_LOCAL_TRAFFIC: "true"

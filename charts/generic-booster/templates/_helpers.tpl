@@ -62,6 +62,74 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
+datadog labels
+*/}}
+{{- define "generic-booster.datadogLabels" }}
+tags.datadoghq.com/env: {{ .Values.datadog.env }}
+tags.datadoghq.com/service: {{ .Values.appName }}
+tags.datadoghq.com/version: {{ .Values.datadog.version | default .Values.image.tag }}
+{{- end }}
+
+{{/*
+application environments
+*/}}
+{{- define "generic-booster.env" }}
+{{- range .Values.env }}
+- name: {{ .name }}
+{{- if and (eq .name "JAVA_TOOL_OPTIONS")  (eq $.Values.datadog.enabled true) (not (contains "dd-java-agent" .value)) }}
+{{ $value := list .value "-javaagent:/datadog/apm/agent/dd-java-agent.jar" | join " " }}
+  value: {{ $value }}
+{{- else }}
+  value: {{ .value }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{/*
+application extra environments
+*/}}
+{{- define "generic-booster.extraEnv" }}
+{{- range .Values.extraEnv }}
+- name: {{ .name }}
+  value: {{ .value }}
+{{- end }}
+{{- end }}
+
+{{/*
+datadog environments
+*/}}
+{{- define "generic-booster.datadogEnv" }}
+- name: DD_AGENT_HOST
+  valueFrom:
+    fieldRef:
+      fieldPath: status.hostIP
+- name: DD_SERVICE
+  valueFrom:
+    fieldRef:
+      fieldPath: metadata.labels['tags.datadoghq.com/service']
+- name: DD_ENV
+  valueFrom:
+    fieldRef:
+      fieldPath: metadata.labels['tags.datadoghq.com/env']
+- name: DD_VERSION
+  valueFrom:
+    fieldRef:
+      fieldPath: metadata.labels['tags.datadoghq.com/version']
+- name: DATADOG_TRACE_AGENT_HOSTNAME
+  valueFrom:
+    fieldRef:
+      fieldPath: status.hostIP
+{{- range .Values.datadog.configs }}
+{{- range $key, $value := . }}
+- name: {{ $key }}
+  value: {{ $value | quote }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+
+
+{{/*
 deployments matchLabels
 */}}
 {{- define "generic-booster.podLabels" }}
