@@ -48,7 +48,11 @@ spec:
       {{- end }}
       {{- if .Values.datadog.enabled }}
       - name: datadog-apm-agent
-        image: busybox
+        # busybox로 하면 tls 에러가 날때가 있어 alpine으로 변경
+        # 같은 이미지로 하여도 dev에서는 안나고, prod에서만 발생
+        # image: busybox
+        image: public.ecr.aws/docker/library/alpine
+        imagePullPolicy: IfNotPresent
         command:
         - wget
         - -O
