@@ -339,13 +339,13 @@ datadog:
   # if not was defined, default is image.tag
 #  version: stable
   configs:
-  - DD_TRACE_ENABLED: "true"
+    DD_TRACE_ENABLED: "true"
 #  -- global sampling rate
 #  - DD_TRACE_SAMPLE_RATE: "0.1"
     DD_PROFILING_ENABLED: "false"
     DD_LOGS_INJECTION: "false"
-  - DD_JMXFETCH_ENABLED: "true"
+    DD_JMXFETCH_ENABLED: "true"
 #  a number of traces per second per service instance.
 #  If no DD_TRACE_RATE_LIMIT value is set, a limit of 100 traces per second is applied.
 #  - DD_TRACE_RATE_LIMIT: "100"
-  - DD_DOGSTATSD_NON_LOCAL_TRAFFIC: "true"
+    DD_DOGSTATSD_NON_LOCAL_TRAFFIC: "true"

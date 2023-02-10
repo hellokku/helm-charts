@@ -124,11 +124,9 @@ datadog environments
   valueFrom:
     fieldRef:
       fieldPath: status.hostIP
-{{- range .Values.datadog.configs }}
-{{- range $key, $value := . }}
+{{- range $key := (.Values.datadog.configs | keys | sortAlpha) }}
 - name: {{ $key }}
-  value: {{ $value | quote }}
-{{- end }}
+  value: {{ get $.Values.datadog.configs $key | quote }}
 {{- end }}
 {{- end }}
 

@@ -1,0 +1,24 @@
+# Use to initialize for the first time
+command:
+  - sh
+  - -c
+  - while true; do echo hello; sleep 10; done
+
+
+startupProbe:
+  exec:
+    command:
+    - touch
+    - /tmp/startup
+
+livenessProbe:
+  exec:
+    command:
+    - touch
+    - /tmp/liveness
+
+readinessProbe:
+  exec:
+    command:
+    - touch
+    - /tmp/readiness
