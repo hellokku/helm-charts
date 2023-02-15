@@ -124,9 +124,24 @@ datadog environments
   valueFrom:
     fieldRef:
       fieldPath: status.hostIP
+{{- if .Values.datadog.enabled }}
+{{- $dd_tags := list }}
+{{- if .Values.datadog.configs.DD_TAGS }}
+{{- $dd_tags = append $dd_tags .Values.datadog.configs.DD_TAGS }}
+{{- end }}
+{{- if and .Values.git.sha .Values.git.url }}
+{{- $dd_tags = append $dd_tags (printf "git.commit.sha:%s,git.repository_url:%s" .Values.git.sha .Values.git.url) }}
+{{- end }}
+{{- if $dd_tags }}
+- name: DD_TAGS
+  value: {{ $dd_tags | join "," | quote }}
+{{- end }}
+{{- end }}
 {{- range $key := (.Values.datadog.configs | keys | sortAlpha) }}
+{{- if ne $key "DD_TAGS" }}
 - name: {{ $key }}
   value: {{ get $.Values.datadog.configs $key | quote }}
+{{- end }}
 {{- end }}
 {{- end }}
 
