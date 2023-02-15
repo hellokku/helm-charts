@@ -76,11 +76,16 @@ application environments
 {{- define "generic-booster.env" }}
 {{- range .Values.env }}
 - name: {{ .name }}
+{{- if .value }}
 {{- if and (eq .name "JAVA_TOOL_OPTIONS")  (eq $.Values.datadog.enabled true) (not (contains "dd-java-agent" .value)) }}
 {{- $value := list .value "-javaagent:/datadog/apm/agent/dd-java-agent.jar" | join " " }}
   value: {{ $value }}
 {{- else }}
   value: {{ .value }}
+{{- end }}
+{{- else }}
+  valueFrom:
+{{ toYaml .valueFrom | indent 6 }}
 {{- end }}
 {{- end }}
 {{- end }}
@@ -91,11 +96,16 @@ application extra environments
 {{- define "generic-booster.extraEnv" }}
 {{- range .Values.extraEnv }}
 - name: {{ .name }}
+{{- if .value }}
 {{- if and (eq .name "JAVA_TOOL_OPTIONS")  (eq $.Values.datadog.enabled true) (not (contains "dd-java-agent" .value)) }}
 {{- $value := list .value "-javaagent:/datadog/apm/agent/dd-java-agent.jar" | join " " }}
   value: {{ $value }}
 {{- else }}
   value: {{ .value }}
+{{- end }}
+{{- else }}
+  valueFrom:
+{{ toYaml .valueFrom | indent 6 }}
 {{- end }}
 {{- end }}
 {{- end }}
