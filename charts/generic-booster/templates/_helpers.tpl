@@ -66,7 +66,7 @@ datadog labels
 */}}
 {{- define "generic-booster.datadogLabels" }}
 tags.datadoghq.com/env: {{ .Values.datadog.env }}
-tags.datadoghq.com/service: {{ .Values.appName }}
+tags.datadoghq.com/service: {{ .Values.datadog.serviceName | default .Values.appName }}
 tags.datadoghq.com/version: {{ .Values.datadog.version | default .Values.image.tag }}
 {{- end }}
 
@@ -79,9 +79,9 @@ application environments
 {{- if .value }}
 {{- if and (eq .name "JAVA_TOOL_OPTIONS")  (eq $.Values.datadog.enabled true) (not (contains "dd-java-agent" .value)) }}
 {{- $value := list .value "-javaagent:/datadog/apm/agent/dd-java-agent.jar" | join " " }}
-  value: {{ $value }}
+  value: {{ $value | quote }}
 {{- else }}
-  value: {{ .value }}
+  value: {{ .value | quote }}
 {{- end }}
 {{- else }}
   valueFrom:
@@ -99,9 +99,9 @@ application extra environments
 {{- if .value }}
 {{- if and (eq .name "JAVA_TOOL_OPTIONS")  (eq $.Values.datadog.enabled true) (not (contains "dd-java-agent" .value)) }}
 {{- $value := list .value "-javaagent:/datadog/apm/agent/dd-java-agent.jar" | join " " }}
-  value: {{ $value }}
+  value: {{ $value | quote }}
 {{- else }}
-  value: {{ .value }}
+  value: {{ .value | quote }}
 {{- end }}
 {{- else }}
   valueFrom:

@@ -1,0 +1,19 @@
+{{- if .Values.sgp.enabled }}
+apiVersion: vpcresources.k8s.aws/v1beta1
+kind: SecurityGroupPolicy
+metadata:
+  name: {{ include "generic-booster.fullname" . }}
+  labels:
+    {{- include "generic-booster.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- if .Values.matchLabels }}
+      {{- toYaml .Values.matchLabels | nindent 6 }}
+      {{- else }}
+      app.kubernetes.io/name: {{ include "generic-booster.name" . }}
+      {{- end }}
+  securityGroups:
+    groupIds:
+    {{- toYaml .Values.sgp.groupIds | nindent 12 }}
+{{- end }}

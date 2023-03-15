@@ -30,6 +30,9 @@ spec:
         {{- include "generic-booster.podAnnotations" . | nindent 8 }}
       labels:
         {{- include "generic-booster.podLabels" . | nindent 8 }}
+        {{- if .Values.datadog.enabled }}
+        {{- include "generic-booster.datadogLabels" . | nindent 8 }}
+        {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -40,9 +43,25 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       {{- end }}
-      {{- if .Values.podInitContainers }}
       initContainers:
+      {{- if .Values.initContainers }}
         {{- toYaml .Values.podInitContainers | nindent 8 }}
+      {{- end }}
+      {{- if .Values.datadog.enabled }}
+      - name: datadog-apm-agent
+        # busybox로 하면 tls 에러가 날때가 있어 alpine으로 변경
+        # 같은 이미지로 하여도 dev에서는 안나고, prod에서만 발생
+        # image: busybox
+        image: public.ecr.aws/docker/library/alpine
+        imagePullPolicy: IfNotPresent
+        command:
+        - wget
+        - -O
+        - /datadog/apm/agent/dd-java-agent.jar
+        - https://dtdg.co/latest-java-tracer
+        volumeMounts:
+        - name: datadog-apm-agent
+          mountPath: /datadog/apm/agent
       {{- end }}
       containers:
         - name: {{ .Values.appName | default .Release.Name }}
@@ -52,12 +71,15 @@ spec:
           {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- if .Values.env }}
           env:
-          {{- toYaml .Values.env | nindent 12 }}
+          {{- if .Values.env }}
+          {{- include "generic-booster.env" . | nindent 12 }}
+          {{- end }}
           {{- if .Values.extraEnv }}
-          {{- toYaml .Values.extraEnv | nindent 12 }}
-          {{- end}}
+          {{- include "generic-booster.extraEnv" . | nindent 12 }}
+          {{- end }}
+          {{- if .Values.datadog.enabled }}
+          {{- include "generic-booster.datadogEnv" . | nindent 12 }}
           {{- end }}
           {{- if .Values.command }}
           command:
@@ -91,9 +113,13 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           lifecycle:
             {{- toYaml .Values.lifecycle | nindent 12 }}
-          {{- with .Values.volumeMounts }}
           volumeMounts:
+          {{- with .Values.volumeMounts }}
           {{- toYaml . | nindent 10 }}
+          {{- end }}
+          {{- if .Values.datadog.enabled }}
+          - name: datadog-apm-agent
+            mountPath: /datadog/apm/agent
           {{- end }}
           {{- if .Values.tty }}
           tty: true
@@ -110,9 +136,13 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.volumes }}
       volumes:
+      {{- with .Values.volumes }}
       {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- if .Values.datadog.enabled }}
+      - name: datadog-apm-agent
+        emptyDir: {}
       {{- end }}
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       {{- with .Values.topologySpreadConstraints }}

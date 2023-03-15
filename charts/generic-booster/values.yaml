@@ -335,6 +335,7 @@ autoscaling:
 
 datadog:
   enabled: false
+  serviceName: ""
   env: wedapne2
   # if not was defined, default is image.tag
 #  version: stable
@@ -354,3 +355,6 @@ datadog:
 git: {}
 #  sha:
 #  repository:
+
+sgp:
+  enabled: false
