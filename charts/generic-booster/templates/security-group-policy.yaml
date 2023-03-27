@@ -15,5 +15,5 @@ spec:
       {{- end }}
   securityGroups:
     groupIds:
-    {{- toYaml .Values.sgp.groupIds | nindent 12 }}
+    {{- toYaml .Values.sgp.groupIds | nindent 4 }}
 {{- end }}
