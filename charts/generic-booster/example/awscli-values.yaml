@@ -1,0 +1,15 @@
+appName: busybox
+testConnection: false
+
+image:
+  repository: kkuroo/aws-cli
+
+tty: true
+
+livenessProbe: null
+readinessProbe: null
+
+sgp:
+  enabled: true
+  groupIds:
+  - sg-xxxxxxxxxxxxxx
