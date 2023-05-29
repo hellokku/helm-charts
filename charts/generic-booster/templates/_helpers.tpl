@@ -196,6 +196,16 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 {{- end }}
 
+{{/*
+Create the name of the service to use
+*/}}
+{{- define "generic-booster.serviceName" -}}
+{{- if .Values.service.enabled }}
+{{- default (include "generic-booster.fullname" .) .Values.service.name }}
+{{- else }}
+{{- default "default" .Values.service.name }}
+{{- end }}
+{{- end }}
 
 {{/*
 Create the name of the service account to use
