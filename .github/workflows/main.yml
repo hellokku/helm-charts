@@ -6,19 +6,11 @@ on:
       - master
     paths:
       - 'charts/**'
-    paths-ignore:
-      - '**/README.md'
-      - 'README.md'
-      - 'charts/example/**'
   pull_request:
     branches:
       - master
     paths:
       - 'charts/**'
-    paths-ignore:
-      - '**/README.md'
-      - 'README.md'
-      - 'charts/example/**'
 jobs:
   release:
     runs-on: ubuntu-latest
