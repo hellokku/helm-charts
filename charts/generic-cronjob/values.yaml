@@ -5,6 +5,7 @@ sechedule: ""
 suspend: "false"
 successfulJobsHistoryLimit: 3
 backoffLimit: 2
+ttlSecondsAfterFinished: -1
 
 serviceAccount:
   # Specifies whether a service account should be created
