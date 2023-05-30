@@ -19,6 +19,9 @@ spec:
         {{- toYaml .Values.jobAnnotations | nindent 8 }}
     spec:
       backoffLimit: {{ .Values.backoffLimit }}
+      {{- if gt .Values.ttlSecondsAfterFinished -1.0 }}
+      ttlSecondsAfterFinished: {{ .Values.ttlSecondsAfterFinished }}
+      {{- end }}
       template:
         metadata:
           annotations:
