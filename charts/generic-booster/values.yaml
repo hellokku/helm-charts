@@ -14,9 +14,11 @@ appName: ""
 # -- added specifically application app.kubernetes.io/version to pod Label, its default is image tag
 appVersion: stable
 
-# -- if true, app.kubernetes.io/application label to pod Selector 
+# -- if true, app.kubernetes.io/application label to pod Selector
 appVersionSelector: true
 
+# -- if true, added app.kubernetes.io/version selector to service's selector
+serviceVersionSelector: false
 
 #  service_name:
 # ----------------------------
@@ -55,7 +57,10 @@ service:
 #      port: 1234
 #      protocol: TCP
 #      targetPort: someport
+  labels: {}
   annotations: {}
+  name: ""
+
 
 
 serviceAccount:
@@ -336,6 +341,7 @@ autoscaling:
 datadog:
   enabled: false
   serviceName: ""
+  language: java
   env: wedapne2
   # if not was defined, default is image.tag
 #  version: stable

@@ -5,7 +5,7 @@ Expand the name of the chart.
 {{- if .Values.appVersionSelector }}
 {{- required "if appVersionSelector is enabled, appName is required" .Values.appName | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- default .Values.appName .Release.Name| trunc 63 | trimSuffix "-" }}
+{{- .Values.appName | default .Release.Name | trunc 63 | trimSuffix "-" }}
 {{- end }}
 {{- end }}
 
@@ -18,7 +18,7 @@ If release name contains chart name it will be used as a full name.
 {{- if .Values.fullappName }}
 {{- .Values.fullappName | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- $name := default .Chart.Name .Values.appName }}
+{{- $name := .Values.appName | default .Chart.Name }}
 {{- if contains $name .Release.Name }}
 {{- .Release.Name | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -193,6 +193,9 @@ app.kubernetes.io/name: {{ include "generic-booster.name" . }}
 {{- else -}}
 app.kubernetes.io/name: {{ include "generic-booster.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+{{- if .Values.serviceVersionSelector }}
+app.kubernetes.io/version: {{ include "generic-booster.version" . }}
 {{- end -}}
 {{- end }}
 
