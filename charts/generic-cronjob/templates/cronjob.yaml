@@ -29,6 +29,7 @@ spec:
           labels:
             {{- include "generic-cronjob.podLabels" . | nindent 12 }}
         spec:
+          serviceAccountName: {{ include "generic-booster.serviceAccountName" . }}
           containers:
           - name: {{ .Values.appName | default .Release.Name }}
             {{- if or .Values.containerSecurityContext }}
