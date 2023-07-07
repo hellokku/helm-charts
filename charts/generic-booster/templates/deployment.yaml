@@ -46,7 +46,7 @@ spec:
       {{- if .Values.initContainers }}
         {{- toYaml .Values.initContainers | nindent 8 }}
       {{- end }}
-      {{- if .Values.datadog.enabled }}
+      {{- if and (.Values.datadog.enabled) (eq .Values.datadog.language "java") }}
       - name: datadog-apm-agent
         # busybox로 하면 tls 에러가 날때가 있어 alpine으로 변경
         # 같은 이미지로 하여도 dev에서는 안나고, prod에서만 발생
