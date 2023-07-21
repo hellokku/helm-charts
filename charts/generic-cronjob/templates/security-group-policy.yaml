@@ -2,16 +2,16 @@
 apiVersion: vpcresources.k8s.aws/v1beta1
 kind: SecurityGroupPolicy
 metadata:
-  name: {{ include "generic-booster.fullname" . }}
+  name: {{ include "generic-cronjob.fullname" . }}
   labels:
-    {{- include "generic-booster.labels" . | nindent 4 }}
+    {{- include "generic-cronjob.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
       {{- if .Values.matchLabels }}
       {{- toYaml .Values.matchLabels | nindent 6 }}
       {{- else }}
-      app.kubernetes.io/name: {{ include "generic-booster.name" . }}
+      app.kubernetes.io/name: {{ include "generic-cronjob.name" . }}
       {{- end }}
   securityGroups:
     groupIds:
