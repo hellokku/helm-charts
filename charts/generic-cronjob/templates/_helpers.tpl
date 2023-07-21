@@ -6,7 +6,6 @@ Expand the name of the chart.
 {{- required "if appVersionSelector is enabled, appName is required" .Values.appName | trunc 63 | trimSuffix "-" }}
 {{- else }}
 {{- default .Values.appName .Release.Name | trunc 63 | trimSuffix "-" }}
-{{- default .Values.appName .Release.Name| trunc 63 | trimSuffix "-" }}
 {{- end }}
 {{- end }}
 
