@@ -182,3 +182,7 @@ configMaps: []
 
 # -- extraPodValues
 extraPodValues: []
+
+git: {}
+#  sha:
+#  repository:
