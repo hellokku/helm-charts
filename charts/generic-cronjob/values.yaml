@@ -186,3 +186,6 @@ extraPodValues: []
 git: {}
 #  sha:
 #  repository:
+
+sgp:
+  enabled: false
