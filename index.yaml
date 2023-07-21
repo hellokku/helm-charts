@@ -148,6 +148,15 @@ entries:
     version: 0.1.1
   generic-cronjob:
   - apiVersion: v2
+    created: "2023-07-21T08:42:18.544925945Z"
+    description: A Helm chart for Generic Cron Job,
+    digest: 71f83f4b4b68973fa86800354311d987586806a16ef1205109c608991d56c3ae
+    name: generic-cronjob
+    type: application
+    urls:
+    - https://github.com/hellokku/helm-charts/releases/download/generic-cronjob-0.6.1/generic-cronjob-0.6.1.tgz
+    version: 0.6.1
+  - apiVersion: v2
     created: "2023-07-21T08:32:48.178137288Z"
     description: A Helm chart for Generic Cron Job,
     digest: 9369815354f403f038f51188b77ea304af1cc88877301d55eaaf63cb5a78a834
@@ -201,4 +210,4 @@ entries:
     urls:
     - https://github.com/hellokku/helm-charts/releases/download/generic-cronjob-0.1.0/generic-cronjob-0.1.0.tgz
     version: 0.1.0
-generated: "2023-07-21T08:32:48.178376477Z"
+generated: "2023-07-21T08:42:18.545001045Z"
