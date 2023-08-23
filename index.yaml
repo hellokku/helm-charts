@@ -2,6 +2,15 @@ apiVersion: v1
 entries:
   generic-booster:
   - apiVersion: v2
+    created: "2023-08-23T06:00:03.335608646Z"
+    description: A Helm chart for Generic Appa
+    digest: 5a273cd700482872896f995337b1c2f10c4c5570bfa6c936b96a722d36273fbf
+    name: generic-booster
+    type: application
+    urls:
+    - https://github.com/hellokku/helm-charts/releases/download/generic-booster-0.15.2/generic-booster-0.15.2.tgz
+    version: 0.15.2
+  - apiVersion: v2
     created: "2023-07-13T15:05:51.964282036Z"
     description: A Helm chart for Generic App
     digest: 301fca696fd61ce88168cef96946fd1045f31039a068178dbc9e1beeda55538c
@@ -148,6 +157,15 @@ entries:
     version: 0.1.1
   generic-cronjob:
   - apiVersion: v2
+    created: "2023-08-23T06:00:03.470689249Z"
+    description: A Helm chart for Generic Cron Job,
+    digest: 5a33fb1c4177bdb13104ce3b58465ef220104c9ca99677752285649e186bef29
+    name: generic-cronjob
+    type: application
+    urls:
+    - https://github.com/hellokku/helm-charts/releases/download/generic-cronjob-0.6.4/generic-cronjob-0.6.4.tgz
+    version: 0.6.4
+  - apiVersion: v2
     created: "2023-07-21T08:54:07.071037007Z"
     description: A Helm chart for Generic Cron Job,
     digest: a82e57cb10365a8dc8fcd82596e3219182c5e1202fa903342bc38a94f8e3eec5
@@ -219,4 +237,4 @@ entries:
     urls:
     - https://github.com/hellokku/helm-charts/releases/download/generic-cronjob-0.1.0/generic-cronjob-0.1.0.tgz
     version: 0.1.0
-generated: "2023-07-21T08:54:07.071105007Z"
+generated: "2023-08-23T06:00:03.470846451Z"
