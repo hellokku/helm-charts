@@ -135,6 +135,10 @@ datadog environments
     fieldRef:
       fieldPath: status.hostIP
 {{- if .Values.datadog.enabled }}
+{{- if eq .Values.datadog.language "nodejs" }}
+- name: NODE_OPTIONS
+  value: {{ printf "--require dd-trace/init" | quote }}
+{{- end }}
 {{- $dd_tags := list }}
 {{- if .Values.datadog.configs.DD_TAGS }}
 {{- $dd_tags = append $dd_tags .Values.datadog.configs.DD_TAGS }}
