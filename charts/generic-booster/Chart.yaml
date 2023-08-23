@@ -2,4 +2,4 @@ apiVersion: v2
 name: generic-booster
 description: A Helm chart for Generic Appa
 type: application
-version: 0.15.1
+version: 0.15.2
