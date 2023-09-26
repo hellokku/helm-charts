@@ -265,6 +265,7 @@ readinessProbe: {}
 
 # -- volumes
 volumes: []
+extraVolumes: []
 #- name: mysql-tls
 #  secret:
 #    secretName: selfsigned-cert-tls
@@ -275,6 +276,7 @@ volumes: []
 
 # -- volumeMounts
 volumeMounts: []
+extraVolumeMounts: []
 #- name: mysql-tls
 #  mountPath: /etc/mysql/tls
 #  readOnly: true
@@ -356,7 +358,7 @@ datadog:
 #  If no DD_TRACE_RATE_LIMIT value is set, a limit of 100 traces per second is applied.
 #  - DD_TRACE_RATE_LIMIT: "100"
     DD_DOGSTATSD_NON_LOCAL_TRAFFIC: "true"
-
+#    DD_TRACE_ANNOTATIONS: 'org.springframework.transaction.annotation.Transactional;org.springframework.context.event.EventListener'
 
 git: {}
 #  sha:

@@ -116,6 +116,9 @@ spec:
           {{- with .Values.volumeMounts }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
+          {{- if .Values.extraVolumeMounts }}
+          {{- toYaml .Values.extraVolumeMounts | nindent 10 }}
+          {{- end }}
           {{- if and (.Values.datadog.enabled) (eq .Values.datadog.language "java") }}
           - name: datadog-apm-agent
             mountPath: /datadog/apm/agent
@@ -140,6 +143,9 @@ spec:
       volumes:
       {{- with .Values.volumes }}
       {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- if .Values.extraVolumes }}
+      {{- toYaml .Values.extraVolumes | nindent 6 }}
       {{- end }}
       {{- if and (.Values.datadog.enabled) (eq .Values.datadog.language "java") }}
       - name: datadog-apm-agent
