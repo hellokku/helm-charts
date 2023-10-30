@@ -67,14 +67,37 @@ spec:
             {{- end }}
             terminationMessagePath: /dev/termination-log
             terminationMessagePolicy: File
-          terminationGracePeriodSeconds: 30
-          {{- with .Values.volumes }}
+          {{- with .Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 8 }}
+          {{- end }}
+          {{- with .Values.priorityClassName }}
+          priorityClassName: {{ . }}
+          {{- end }}
+          {{- with .Values.affinity }}
+          affinity:
+            {{- toYaml . | nindent 8 }}
+          {{- end }}
+          {{- with .Values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 8 }}
+          {{- end }}
           volumes:
-          {{- toYaml . | nindent 10 }}
+          {{- with .Values.volumes }}
+          {{- toYaml . | nindent 6 }}
           {{- end }}
-          {{- with .Values.extraPodValues }}
-            {{- toYaml . | nindent 10 }}
+          {{- if .Values.extraVolumes }}
+          {{- toYaml .Values.extraVolumes | nindent 6 }}
           {{- end }}
+          {{* unused datadog *}}
+          terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+          {{- with .Values.topologySpreadConstraints }}
+          topologySpreadConstraints:
+            {{- toYaml . | nindent 8 }}
+          {{- end }}
+        {{- with .Values.extraContainers }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
   schedule: {{ .Values.schedule | quote }}
   successfulJobsHistoryLimit: 3
   suspend: {{ .Values.suspend }}
