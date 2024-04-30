@@ -1,10 +1,11 @@
-{{ $vs := .Values.virtualService }}
+{{ $vs := .Values.virtualServicePreview }}
 {{- if .Values.istio.enabled }}
+{{- if $vs.enabled }}
 ---
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: {{ include "generic-booster.fullname" . }}
+  name: {{ include "generic-booster.fullname" . }}-preview
   namespace: {{ $.Release.Namespace }}
   labels:
     {{- $vs.labels | toYaml | nindent 4 }}
@@ -23,15 +24,12 @@ spec:
   {{- if $vs.http }}
   {{- $vs.http | toYaml | nindent 2 }}
   {{- else }}
-  - name: primary
+  - name: preview
     route:
     - destination:
         host: {{ include "generic-booster.fullname" . }}
-        subset: stable
-      weight: 100
-    - destination:
-        host: {{ include "generic-booster.fullname" . }}
         subset: canary
-      weight: 0
+      weight: 100
   {{- end }}
+{{- end }}
 {{- end }}

@@ -382,6 +382,10 @@ virtualService:
   annotations:
     external-dns.alpha.kubernetes.io/exclude: "true"
 
+virtualServicePreview:
+  enabled: true
+  # domain 생성은 virtualservice 에서
+
 # argo rollout에서 subset level traffic splitting을 위해 destinationRule 사용
 destinationRule:
   enabled: true
