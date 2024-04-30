@@ -364,5 +364,55 @@ git: {}
 #  sha:
 #  repository:
 
+# ----------------------------
+# security-group policy for Pod
+# ----------------------------
 sgp:
   enabled: false
+
+
+# ----------------------------
+# istio
+# ----------------------------
+istio:
+  enabled: false
+
+virtualService:
+  # domain 생성은 gateway에서
+  annotations:
+    external-dns.alpha.kubernetes.io/exclude: "true"
+
+# argo rollout에서 subset level traffic splitting을 위해 destinationRule 사용
+destinationRule:
+  enabled: true
+  subsetEnabled: true
+  trafficPolicy:
+    enabled: false
+  subsets: []
+
+# ----------------------------
+# argo rollout
+# ----------------------------
+# argo roloout 기본 step
+# step 1. header 기반  routing을 사용하여 특정 헤더를 가진 사용자(요청)만 canary pod로 routing 한다.
+# step 2. 25% 일반 사용자를 canary pod로 routing 한다.
+# step 3. 100% 일반 사용자를 canary pod로 rounting 하고, canary를 stable로 전환
+argoRollout:
+  enabled: false
+  managedRoutes:
+  - name: header-route-version
+  steps:
+  - setCanaryScale:
+      replicas: 1
+  # header rounting
+  - setHeaderRoute:
+      match:
+      - headerName: x-routing-for
+        headerValue:
+          exact: canary
+      name: header-route-version
+  - pause: {}
+  - setCanaryScale:
+      weight: 25
+  - setWeight: 25
+  - pause: {}

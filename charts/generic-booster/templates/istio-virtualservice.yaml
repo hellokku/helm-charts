@@ -1,0 +1,36 @@
+{{- if .Values.istio.enabled }}
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ include "generic-booster.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- .Values.virtualService.labels | toYaml | nindent 4 }}
+  annotations:
+    {{- .Values.virtualService.annotations | toYaml | nindent 4 }}
+spec:
+  gateways:
+  {{- if .Values.virtualService.gateways }}
+  {{- .Values.virtualService.gateways | toYaml | nindent 2 }}
+  {{- else }}
+  - {{ .Release.namespace }}-ext
+  {{- end }}
+  hosts:
+  {{- .Values.virtualService.hosts | toYaml | nindent 2 }}
+  http:
+  {{- if .Values.virtualService.http }}
+  {{- .Values.virtualService.http | toYaml | nindent 2 }}
+  {{- else }}
+  - name: primary
+    route:
+    - destination:
+        host: {{ include "generic-booster.fullname" . }}
+        subset: stable
+      weight: 100
+    - destination:
+        host: {{ include "generic-booster.fullname" . }}
+        subset: canary
+      weight: 0
+  {{- end }}
+{{- end }}

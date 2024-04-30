@@ -1,0 +1,62 @@
+{{- if .Values.argoRollout.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: {{ include "generic-booster.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.argoRollout.replicas }}
+  revisionHistoryLimit: 5
+  workloadRef:
+    apiVersion: apps/v1
+    {{- if or (eq .Values.resource_type "sts") (eq .Values.resource_type "statefulset") }}
+    kind: StatefulSet
+    {{- else }}
+    kind: Deployment
+    {{- end }}
+    name: {{ include "generic-booster.fullname" . }}
+#    1.7 부터? 1.6에는 없음
+#    scaleDown: onsuccess
+  strategy:
+    canary:
+      # istio하고 할때 안먹음
+#      maxSurge: "1"
+#      maxUnavailable: "100%"
+      # datadog 돈나가서 바로 삭제 해야 하는데., blue/green
+      scaleDownDelaySeconds: 5
+      trafficRouting:
+        managedRoutes:
+        {{- .Values.argoRollout.managedRoutes | toYaml | nindent 8 }}
+        istio:
+          {{- if .Values.argoRollout.istio }}
+          {{- .Values.argoRollout.istio | toYaml | nindent 8 }}
+          {{- else }}
+          virtualService:
+            name: {{ include "generic-booster.fullname" . }}
+            routes:
+            - primary
+          destinationRule:
+            name: {{ include "generic-booster.fullname" . }}
+            canarySubsetName: canary
+            stableSubsetName: stable
+          {{- end }}
+      steps:
+      {{- if .Values.argoRollout.steps }}
+      {{- .Values.argoRollout.steps | toYaml | nindent 6 }}
+      {{- else }}
+      # example
+      - setCanaryScale:
+          replicas: 1
+      - setHeaderRoute:
+          match:
+          - headerName: x-routing-for
+            headerValue:
+              exact: canary
+          name: header-route-version
+      - pause: {}
+      - setCanaryScale:
+          weight: 25
+      - setWeight: 25
+      - pause: {}
+      {{- end }}
+{{- end }}

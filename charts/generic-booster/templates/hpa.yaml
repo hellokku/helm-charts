@@ -3,6 +3,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "generic-booster.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "generic-booster.labels" . | nindent 4 }}
   {{- with .Values.autoscaling.annotations }}
@@ -11,9 +12,14 @@ metadata:
   {{- end }}
 spec:
   scaleTargetRef:
+  {{- if .Values.autoscaling.scaleTargetRef }}
+    {{- toYaml .Values.autoscaling.scaleTargetRef | nindent 4 }}
+    name: {{ include "generic-booster.fullname" . }}
+  {{- else }}
     apiVersion: apps/v1
     kind: Deployment
     name: {{ include "generic-booster.fullname" . }}
+  {{- end }}
   minReplicas: {{ .Values.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
   metrics:

@@ -10,6 +10,7 @@ apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: {{ $fullName }}
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "generic-booster.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
@@ -17,6 +18,9 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
+  {{- if .Values.ingress.ingressClassName }}
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  {{- end }}
   {{- if .Values.ingress.tls }}
   tls:
     {{- range .Values.ingress.tls }}
@@ -28,24 +32,5 @@ spec:
     {{- end }}
   {{- end }}
   rules:
-    {{- range .Values.ingress.hosts }}
-    - http:
-        paths:
-          {{- range .paths }}
-          - path: {{ .path }}
-            pathType: {{ .pathType }}
-            backend:
-              service:
-                name: {{ .serviceName | default $fullName }}
-                port: 
-                  {{- if and (or $svcPortName .portName) (not .portNum)}}
-                  name: {{ .portName | default $svcPortName }}
-                  {{ else if $svcPortNum }}
-                  number: {{ .portNum | default $svcPortNum }}
-                  {{- end }} 
-          {{- end }}
-      {{- if .host }}
-      host: {{ .host | quote }}
-      {{- end }} 
-    {{- end }}
+    {{ .Values.ingress.rules | toYaml | nindent 4 }}
   {{- end }}

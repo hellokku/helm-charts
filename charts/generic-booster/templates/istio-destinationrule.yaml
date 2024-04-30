@@ -1,0 +1,37 @@
+{{- if .Values.istio.enabled }}
+---
+# argo-rollout's canary strategy with istio
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: {{ include "generic-booster.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- .Values.destinationRule.labels | toYaml | nindent 4 }}
+  annotations:
+    {{- .Values.destinationRule.annotations | toYaml | nindent 4 }}
+spec:
+  host: {{ include "generic-booster.fullname" . }}
+  {{- if .Values.destinationRule.trafficPolicy.enabled }}
+  trafficPolicy:
+  {{- if .Values.destinationRule.trafficPolicy }}
+  {{- .Values.destinationRule.trafficPolicy | toYaml | nindent 4 }}
+  {{- else }}
+    tls:
+      mode: SIMPLE
+  {{- end }}
+  {{- end }}
+  {{- if .Values.destinationRule.subsetEnabled }}
+  subsets:
+  {{- if .Values.destinationRule.subsets }}
+  {{- .Values.destinationRule.subsets | toYaml | nindent 2 }}
+  {{- else }}
+    - name: canary
+      labels:
+        app.kubernetes.io/name: {{ include "generic-booster.fullname" . }}
+    - name: stable
+      labels:
+        app.kubernetes.io/name: {{ include "generic-booster.fullname" . }}
+  {{- end }}
+  {{- end }}
+{{- end }}
