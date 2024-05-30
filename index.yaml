@@ -2,6 +2,15 @@ apiVersion: v1
 entries:
   generic-booster:
   - apiVersion: v2
+    created: "2024-05-30T06:28:06.458363253Z"
+    description: A Helm chart for Generic App
+    digest: 56fbc28b9ffcc55fdff34e5d74d6a2509a3b1cc7ab47a32bfaf221c37a661aa7
+    name: generic-booster
+    type: application
+    urls:
+    - https://github.com/hellokku/helm-charts/releases/download/generic-booster-0.17.1/generic-booster-0.17.1.tgz
+    version: 0.17.1
+  - apiVersion: v2
     created: "2024-04-30T02:52:48.06294051Z"
     description: A Helm chart for Generic Appa
     digest: 3a026519e55fc22b4e4b0078187e4bff5bdcc4e75f59556bb862d1b2776f6b58
@@ -291,4 +300,4 @@ entries:
     urls:
     - https://github.com/hellokku/helm-charts/releases/download/generic-cronjob-0.1.0/generic-cronjob-0.1.0.tgz
     version: 0.1.0
-generated: "2024-04-30T02:52:48.063195289Z"
+generated: "2024-05-30T06:28:06.458524313Z"
