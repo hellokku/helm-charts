@@ -45,7 +45,7 @@ spec:
       {{- end }}
       initContainers:
       {{- if .Values.initContainers }}
-        {{- toYaml .Values.podInitContainers | nindent 8 }}
+        {{- toYaml .Values.initContainers | nindent 8 }}
       {{- end }}
       {{- if .Values.datadog.enabled }}
       - name: datadog-apm-agent
