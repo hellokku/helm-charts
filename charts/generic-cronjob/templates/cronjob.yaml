@@ -30,74 +30,75 @@ spec:
             {{- include "generic-cronjob.podLabels" . | nindent 12 }}
         spec:
           serviceAccountName: {{ include "generic-cronjob.serviceAccountName" . }}
+          restartPolicy: {{ .Values.restartPolicy }}
           containers:
           - name: {{ .Values.appName | default .Release.Name }}
             {{- if or .Values.containerSecurityContext }}
             securityContext:
-              {{- toYaml .Values.containerSecurityContext | nindent 12 }}
+              {{- toYaml .Values.containerSecurityContext | nindent 14 }}
             {{- end }}
             image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
             imagePullPolicy: {{ .Values.image.pullPolicy }}
             {{- if .Values.env }}
             env:
-            {{ toYaml .Values.env | nindent 12 }}
-            {{- if .Values.extraEnv }}
-            {{- toYaml .Values.extraEnv | nindent 12 }}
-            {{- end}}
+              {{- toYaml .Values.env | nindent 14 }}
+              {{- if .Values.extraEnv }}
+              {{- toYaml .Values.extraEnv | nindent 14 }}
+              {{- end }}
             {{- end }}
             {{- if .Values.command }}
             command:
-            {{- toYaml .Values.command | nindent 12 }}
-            {{- if .Values.extraCommand }}
-            {{- toYaml .Values.extraCommand | nindent 12 }}
-            {{- end }}
+              {{- toYaml .Values.command | nindent 14 }}
+              {{- if .Values.extraCommand }}
+              {{- toYaml .Values.extraCommand | nindent 14 }}
+              {{- end }}
             {{- end }}
             {{- if .Values.args }}
             args:
-            {{- toYaml .Values.args | nindent 12 }}
-            {{- if .Values.extraArgs }}
-            {{- toYaml .Values.extraArgs | nindent 12 }}
-            {{- end}}
-            {{- end}}
+              {{- toYaml .Values.args | nindent 14 }}
+              {{- if .Values.extraArgs }}
+              {{- toYaml .Values.extraArgs | nindent 14 }}
+              {{- end }}
+            {{- end }}
             resources:
               {{- toYaml .Values.resources | nindent 14 }}
             {{- with .Values.volumeMounts }}
             volumeMounts:
-            {{- toYaml . | nindent 12 }}
+              {{- toYaml . | nindent 14 }}
             {{- end }}
             terminationMessagePath: /dev/termination-log
             terminationMessagePolicy: File
           {{- with .Values.nodeSelector }}
           nodeSelector:
-            {{- toYaml . | nindent 8 }}
+            {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- with .Values.priorityClassName }}
           priorityClassName: {{ . }}
           {{- end }}
           {{- with .Values.affinity }}
           affinity:
-            {{- toYaml . | nindent 8 }}
+            {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- with .Values.tolerations }}
           tolerations:
-            {{- toYaml . | nindent 8 }}
+            {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- if .Values.volumes }}
           volumes:
-          {{- with .Values.volumes }}
-          {{- toYaml . | nindent 6 }}
+            {{- toYaml .Values.volumes | nindent 12 }}
           {{- end }}
           {{- if .Values.extraVolumes }}
-          {{- toYaml .Values.extraVolumes | nindent 6 }}
+          extraVolumes:
+            {{- toYaml .Values.extraVolumes | nindent 12 }}
           {{- end }}
-          {{* unused datadog *}}
           terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
           {{- with .Values.topologySpreadConstraints }}
           topologySpreadConstraints:
-            {{- toYaml . | nindent 8 }}
+            {{- toYaml . | nindent 12 }}
           {{- end }}
-        {{- with .Values.extraContainers }}
-          {{- toYaml . | nindent 8 }}
-        {{- end }}
+          {{- with .Values.extraContainers }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
   schedule: {{ .Values.schedule | quote }}
   successfulJobsHistoryLimit: 3
   suspend: {{ .Values.suspend }}
